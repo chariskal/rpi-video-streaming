@@ -5,13 +5,13 @@ from requests import HTTPError
 import json
 import pytz
 import datetime
-import logging 
+import logging
 import os
 import signal
 import serial
 
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG) 
+logger.setLevel(logging.DEBUG)
 handler = logging.FileHandler('stream.log')
 handler.setLevel(logging.DEBUG)
 
@@ -25,10 +25,10 @@ class MsgHandler:
     """
 
     def __init__(self):
-        self.api_endpoint = 'http://62.74.232.210:9010/api/cameras'
-        self.api_endpoint_send = 'http://62.74.232.210:9010/api/cameras/1'
-        url = 'http://62.74.232.210:9010/authenticate'
-        myobj = '{"username":"skironis","password":"password"}'
+        self.api_endpoint = 'http://##.74.232.###:9000/api/cameras'
+        self.api_endpoint_send = 'http://##.74.232.###:9000/api/cameras/1'
+        url = 'http://62.##.232.###:9000/authenticate'
+        myobj = '{"username":"skir#########","password":"password"}'
         headers = {'Content-type': 'application/json'}
         x_resp = requests.post(url, headers=headers, data=myobj, verify=False)              # Request for authentication
         byt = json.loads(x_resp.text)
@@ -102,7 +102,7 @@ def get_rssi(modem, rssi_array):
 
 def main():
     try:
-        # Translate AT+CSQ command returns to rssi 
+        # Translate AT+CSQ command returns to rssi
         rssi_array = {'2':-109,
                  '3':-107,
                  '4':-105,
@@ -157,16 +157,15 @@ def main():
                 else:                                                           # else wait 1 min, and then repeat request
                     time.sleep(59)
                     pass
-            
+
 
             p = subprocess.Popen(l, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, preexec_fn=os.setsid)     # create subprocess p that streams video
-            p_exists = True                                                             
+            p_exists = True
 
             if p.poll() is None:                                                        # if p is active, then update logs and send positive response to server
                 msg.message["data"]["attributes"]["response"] = "running"
                 msg.send_message()
                 logger.info('Video streaming started!')
-            
 
             # Get duration
             cnt =0
@@ -188,7 +187,7 @@ def main():
                 else:                                                               # Else just sleep for 1 min
                     time.sleep(58)
                     pass
-            os.killpg(os.getpgid(p.pid), signal.SIGTERM) 
+            os.killpg(os.getpgid(p.pid), signal.SIGTERM)
             msg.message["data"]["attributes"]["status"] = False
             msg.message["data"]["attributes"]["response"] = "stopped"
             logger.warning(f'Streaming stopped after {cnt} minutes')
